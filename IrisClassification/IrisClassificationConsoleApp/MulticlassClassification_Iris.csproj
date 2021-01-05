@@ -2,19 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="datasets\**" />
-    <EmbeddedResource Remove="datasets\**" />
-    <None Remove="datasets\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\..\..\common\ConsoleHelper.cs" Link="Common\ConsoleHelper.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\Data\iris-test.txt" Link="Data\iris-test.txt" />
@@ -27,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML" Version="$(MicrosoftMLVersion)" />
+    <PackageReference Include="Microsoft.ML" Version="1.5.4" />
   </ItemGroup>
 
 </Project>
