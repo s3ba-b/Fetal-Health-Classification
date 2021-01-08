@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Data\iris-test.txt" Link="Data\iris-test.txt" />
-    <Content Include="..\Data\iris-train.txt" Link="Data\iris-train.txt" />
+    <Content Include="..\Data\fetalhealth-test.csv" Link="Data\fetalhealth-test.csv" />
+    <Content Include="..\Data\fetalhealth-train.csv" Link="Data\fetalhealth-train.csv" />
   </ItemGroup>
 
   <ItemGroup>

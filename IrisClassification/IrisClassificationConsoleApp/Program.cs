@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.ML;
@@ -10,20 +11,21 @@ namespace MulticlassClassification_Iris
 {
     public static partial class Program
     {
+        #region data paths
         private static string AppPath => Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
 
         private static string BaseDatasetsRelativePath = @"../../../../Data";
-        private static string TrainDataRelativePath = $"{BaseDatasetsRelativePath}/iris-train.txt";
-        private static string TestDataRelativePath = $"{BaseDatasetsRelativePath}/iris-test.txt";
+        private static string TrainDataRelativePath = $"{BaseDatasetsRelativePath}/fetalhealth-train.csv";
+        private static string TestDataRelativePath = $"{BaseDatasetsRelativePath}/fetalhealth-test.csv";
 
         private static string TrainDataPath = GetAbsolutePath(TrainDataRelativePath);
         private static string TestDataPath = GetAbsolutePath(TestDataRelativePath);
 
         private static string BaseModelsRelativePath = @"../../../../MLModels";
-        private static string ModelRelativePath = $"{BaseModelsRelativePath}/IrisClassificationModel.zip";
+        private static string ModelRelativePath = $"{BaseModelsRelativePath}/FetalHealthClassificationModel.zip";
 
         private static string ModelPath = GetAbsolutePath(ModelRelativePath);
-
+        #endregion
         private static void Main(string[] args)
         {
             // Create MLContext to be shared across the model creation workflow objects 
@@ -43,23 +45,40 @@ namespace MulticlassClassification_Iris
         private static void BuildTrainEvaluateAndSaveModel(MLContext mlContext)
         {
             // STEP 1: Common data loading configuration
-            var trainingDataView = mlContext.Data.LoadFromTextFile<IrisData>(TrainDataPath, hasHeader: true);
-            var testDataView = mlContext.Data.LoadFromTextFile<IrisData>(TestDataPath, hasHeader: true);
+            var trainingDataView = mlContext.Data.LoadFromTextFile<FetalHealthData>(TrainDataPath, hasHeader: false, separatorChar: ',');
+            var testDataView = mlContext.Data.LoadFromTextFile<FetalHealthData>(TestDataPath, hasHeader: false, separatorChar: ',');
             
 
             // STEP 2: Common data process configuration with pipeline data transformations
-            var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey(outputColumnName: "KeyColumn", inputColumnName: nameof(IrisData.Label))
-                .Append(mlContext.Transforms.Concatenate("Features", nameof(IrisData.SepalLength),
-                                                                                   nameof(IrisData.SepalWidth),
-                                                                                   nameof(IrisData.PetalLength),
-                                                                                   nameof(IrisData.PetalWidth))
+            var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey(outputColumnName: "KeyColumn", inputColumnName: nameof(FetalHealthData.FetalHealth))
+                .Append(mlContext.Transforms.Concatenate("Features", nameof(FetalHealthData.BaselineValue),
+                        nameof(FetalHealthData.Accelerations),
+                        nameof(FetalHealthData.FetalMovement),
+                        nameof(FetalHealthData.UterineContractions),
+                        nameof(FetalHealthData.LightDecelerations),
+                        nameof(FetalHealthData.SevereDecelerations),
+                        nameof(FetalHealthData.ProlonguedDecelerations),
+                        nameof(FetalHealthData.AbnormalShortTermVariability),
+                        nameof(FetalHealthData.MeanValueOfShortTermVariability),
+                        nameof(FetalHealthData.PercentageOfTimeWithAbnormalLongTermVariability),
+                        nameof(FetalHealthData.MeanValueOfLongTermVariability),
+                        nameof(FetalHealthData.HistogramWidth),
+                        nameof(FetalHealthData.HistogramMin),
+                        nameof(FetalHealthData.HistogramMax),
+                        nameof(FetalHealthData.HistogramNumberOfPeaks),
+                        nameof(FetalHealthData.HistogramNumberOfZeroes),
+                        nameof(FetalHealthData.HistogramMode),
+                        nameof(FetalHealthData.HistogramMean),
+                        nameof(FetalHealthData.HistogramMedian),
+                        nameof(FetalHealthData.HistogramVariance),
+                        nameof(FetalHealthData.HistogramTendency))
                                                                        .AppendCacheCheckpoint(mlContext)); 
                                                                        // Use in-memory cache for small/medium datasets to lower training time. 
                                                                        // Do NOT use it (remove .AppendCacheCheckpoint()) when handling very large datasets. 
 
             // STEP 3: Set the training algorithm, then append the trainer to the pipeline  
             var trainer = mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(labelColumnName: "KeyColumn", featureColumnName: "Features")
-            .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName: nameof(IrisData.Label) , inputColumnName: "KeyColumn"));
+            .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName: nameof(FetalHealthData.FetalHealth) , inputColumnName: "KeyColumn"));
 
             var trainingPipeline = dataProcessPipeline.Append(trainer);
 
@@ -70,17 +89,17 @@ namespace MulticlassClassification_Iris
             // STEP 5: Evaluate the model and show accuracy stats
             Console.WriteLine("===== Evaluating Model's accuracy with Test data =====");
             var predictions = trainedModel.Transform(testDataView);
-            var metrics = mlContext.MulticlassClassification.Evaluate(predictions, "Label", "Score");
+            var metrics = mlContext.MulticlassClassification.Evaluate(predictions, "FetalHealth", "Score");
 
             Console.WriteLine($"************************************************************");
             Console.WriteLine($"*    Metrics for {trainer.ToString()} multi-class classification model   ");
             Console.WriteLine($"*-----------------------------------------------------------");
-            Console.WriteLine($"    AccuracyMacro = {metrics.MacroAccuracy:0.####}, a value between 0 and 1, the closer to 1, the better");
-            Console.WriteLine($"    AccuracyMicro = {metrics.MicroAccuracy:0.####}, a value between 0 and 1, the closer to 1, the better");
-            Console.WriteLine($"    LogLoss = {metrics.LogLoss:0.####}, the closer to 0, the better");
-            Console.WriteLine($"    LogLoss for class 1 = {metrics.PerClassLogLoss[0]:0.####}, the closer to 0, the better");
-            Console.WriteLine($"    LogLoss for class 2 = {metrics.PerClassLogLoss[1]:0.####}, the closer to 0, the better");
-            Console.WriteLine($"    LogLoss for class 3 = {metrics.PerClassLogLoss[2]:0.####}, the closer to 0, the better");
+            Console.WriteLine($"    AccuracyMacro = {metrics.MacroAccuracy.ToString(CultureInfo.CurrentCulture)}, a value between 0 and 1, the closer to 1, the better");
+            Console.WriteLine($"    AccuracyMicro = {metrics.MicroAccuracy.ToString(CultureInfo.CurrentCulture)}, a value between 0 and 1, the closer to 1, the better");
+            Console.WriteLine($"    LogLoss = {metrics.LogLoss.ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
+            Console.WriteLine($"    LogLoss for class 1 = {metrics.PerClassLogLoss[0].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
+            Console.WriteLine($"    LogLoss for class 2 = {metrics.PerClassLogLoss[1].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
+            Console.WriteLine($"    LogLoss for class 3 = {metrics.PerClassLogLoss[2].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
             Console.WriteLine($"************************************************************");
 
             // STEP 6: Save/persist the trained model to a .ZIP file
@@ -92,10 +111,10 @@ namespace MulticlassClassification_Iris
         {
             //Test Classification Predictions with some hard-coded samples 
             ITransformer trainedModel = mlContext.Model.Load(ModelPath, out var modelInputSchema);
-
+        
             // Create prediction engine related to the loaded trained model
-            var predEngine = mlContext.Model.CreatePredictionEngine<IrisData, IrisPrediction>(trainedModel);
-
+            var predEngine = mlContext.Model.CreatePredictionEngine<FetalHealthData, FetalHealthPrediction>(trainedModel);
+        
             // During prediction we will get Score column with 3 float values.
             // We need to find way to map each score to original label.
             // In order to do that we need to get TrainingLabelValues from Score column.
@@ -105,7 +124,7 @@ namespace MulticlassClassification_Iris
             VBuffer<float> keys = default;
             predEngine.OutputSchema["PredictedLabel"].GetKeyValues(ref keys);
             var labelsArray = keys.DenseValues().ToArray();
-
+        
             // Since we apply MapValueToKey estimator with default parameters, key values
             // depends on order of occurence in data file. Which is "Iris-setosa", "Iris-versicolor", "Iris-virginica"
             // So if we have Score column equal to [0.2, 0.3, 0.5] that's mean what score for
@@ -113,34 +132,50 @@ namespace MulticlassClassification_Iris
             // Iris-versicolor is 0.3
             // Iris-virginica is 0.5.
             //Add a dictionary to map the above float values to strings. 
-            Dictionary<float, string> IrisFlowers = new Dictionary<float, string>();
-            IrisFlowers.Add(0, "Setosa");
-            IrisFlowers.Add(1, "versicolor");
-            IrisFlowers.Add(2, "virginica");
-
+            Dictionary<float, string> HealthClasses = new Dictionary<float, string>();
+            HealthClasses.Add(1, "Normal");
+            HealthClasses.Add(2, "Suspect");
+            HealthClasses.Add(3, "Pathological");
+        
             Console.WriteLine("=====Predicting using model====");
             //Score sample 1
-            var resultprediction1 = predEngine.Predict(SampleIrisData.Iris1);
-
-            Console.WriteLine($"Actual: setosa.     Predicted label and score:  {IrisFlowers[labelsArray[0]]}: {resultprediction1.Score[0]:0.####}");
-            Console.WriteLine($"                                                {IrisFlowers[labelsArray[1]]}: {resultprediction1.Score[1]:0.####}");
-            Console.WriteLine($"                                                {IrisFlowers[labelsArray[2]]}: {resultprediction1.Score[2]:0.####}");
+            var resultprediction1 = predEngine.Predict(SampleFetalHealthData.Fetal1);
+        
+            Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction1.Score[0].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction1.Score[1].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction1.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
-
+        
             //Score sample 2
-            var resultprediction2 = predEngine.Predict(SampleIrisData.Iris2);
-
-            Console.WriteLine($"Actual: Virginica.   Predicted label and score:  {IrisFlowers[labelsArray[0]]}: {resultprediction2.Score[0]:0.####}");
-            Console.WriteLine($"                                                 {IrisFlowers[labelsArray[1]]}: {resultprediction2.Score[1]:0.####}");
-            Console.WriteLine($"                                                 {IrisFlowers[labelsArray[2]]}: {resultprediction2.Score[2]:0.####}");
+            var resultprediction2 = predEngine.Predict(SampleFetalHealthData.Fetal2);
+        
+            Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction2.Score[0].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction2.Score[1].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction2.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
-
+        
             //Score sample 3
-            var resultprediction3 = predEngine.Predict(SampleIrisData.Iris3);
-
-            Console.WriteLine($"Actual: Versicolor.   Predicted label and score: {IrisFlowers[labelsArray[0]]}: {resultprediction3.Score[0]:0.####}");
-            Console.WriteLine($"                                                 {IrisFlowers[labelsArray[1]]}: {resultprediction3.Score[1]:0.####}");
-            Console.WriteLine($"                                                 {IrisFlowers[labelsArray[2]]}: {resultprediction3.Score[2]:0.####}");
+            var resultprediction3 = predEngine.Predict(SampleFetalHealthData.Fetal3);
+        
+            Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction3.Score[0].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction3.Score[1].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction3.Score[2].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine();
+            
+            //Score sample 4
+            var resultprediction4 = predEngine.Predict(SampleFetalHealthData.Fetal4);
+        
+            Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction4.Score[0].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction4.Score[1].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction4.Score[2].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine();
+            
+            //Score sample 5
+            var resultprediction5 = predEngine.Predict(SampleFetalHealthData.Fetal5);
+        
+            Console.WriteLine($"Actual: Normal.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction5.Score[0].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction5.Score[1].ToString(CultureInfo.CurrentCulture)}");
+            Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction5.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
         }
 
