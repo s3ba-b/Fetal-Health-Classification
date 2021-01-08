@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
-using MulticlassClassification_Iris.DataStructures;
+using MulticlassClassification_Fetal.DataStructures;
 
-namespace MulticlassClassification_Iris
+namespace MulticlassClassification_Fetal
 {
     public static partial class Program
     {

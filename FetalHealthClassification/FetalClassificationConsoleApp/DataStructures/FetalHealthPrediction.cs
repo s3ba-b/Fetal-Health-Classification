@@ -1,4 +1,4 @@
-namespace MulticlassClassification_Iris.DataStructures
+namespace MulticlassClassification_Fetal.DataStructures
 {
     public class FetalHealthPrediction
     {

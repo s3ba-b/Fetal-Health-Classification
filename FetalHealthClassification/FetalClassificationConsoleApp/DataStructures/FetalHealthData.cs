@@ -1,6 +1,6 @@
 using Microsoft.ML.Data;
 
-namespace MulticlassClassification_Iris.DataStructures
+namespace MulticlassClassification_Fetal.DataStructures
 {
     public class FetalHealthData
     {
