@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Transforms;
 using MulticlassClassification_Fetal.DataStructures;
 
 namespace MulticlassClassification_Fetal
@@ -26,31 +27,119 @@ namespace MulticlassClassification_Fetal
 
         private static string ModelPath = GetAbsolutePath(ModelRelativePath);
         #endregion
+
+        /// <summary>
+        /// Start the program.
+        /// Create MLContext to be shared across the model creation workflow objects. 
+        /// Set a random seed for repeatable/deterministic results across multiple trainings.
+        /// </summary>
+        /// <param name="args"></param>
         private static void Main(string[] args)
         {
-            // Create MLContext to be shared across the model creation workflow objects 
-            // Set a random seed for repeatable/deterministic results across multiple trainings.
             var mlContext = new MLContext(seed: 0);
-
-            //1.
             BuildTrainEvaluateAndSaveModel(mlContext);
-
-            //2.
             TestSomePredictions(mlContext);
 
             Console.WriteLine("=============== End of process, hit any key to finish ===============");
             Console.ReadKey();
         }
 
+
+        /// <summary>
+        /// Common data loading configuration,build, train, evaluate and save the trained model to a zip file.
+        /// </summary>
+        /// <param name="mlContext"></param>
         private static void BuildTrainEvaluateAndSaveModel(MLContext mlContext)
         {
-            // STEP 1: Common data loading configuration
             var trainingDataView = mlContext.Data.LoadFromTextFile<FetalHealthData>(TrainDataPath, hasHeader: false, separatorChar: ',');
             var testDataView = mlContext.Data.LoadFromTextFile<FetalHealthData>(TestDataPath, hasHeader: false, separatorChar: ',');
-            
+            EstimatorChain<TransformerChain<ColumnConcatenatingTransformer>> dataProcessPipeline = GetDataProcessPipeline(mlContext);
+            var trainer = GetTrainer(dataProcessPipeline, mlContext);
+            var trainingPipeline = dataProcessPipeline.Append(trainer);
+            ITransformer trainedModel = getTrainedModel(trainingDataView, trainingPipeline);
+            MulticlassClassificationMetrics metrics = EvaluateModel(mlContext, testDataView, trainedModel);
+            ShowAccuracyStats(trainer, metrics);
+            SaveModel(mlContext, trainingDataView, trainedModel);
+        }
 
-            // STEP 2: Common data process configuration with pipeline data transformations
-            var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey(outputColumnName: "KeyColumn", inputColumnName: nameof(FetalHealthData.FetalHealth))
+        /// <summary>
+        /// Save/persist the trained model to a .ZIP file.
+        /// </summary>
+        /// <param name="mlContext"></param>
+        /// <param name="trainingDataView"></param>
+        /// <param name="trainedModel"></param>
+        private static void SaveModel(MLContext mlContext, IDataView trainingDataView, ITransformer trainedModel)
+        {
+            mlContext.Model.Save(trainedModel, trainingDataView.Schema, ModelPath);
+            Console.WriteLine("The model is saved to {0}", ModelPath);
+        }
+
+        /// <summary>
+        /// Show accuracy stats.
+        /// </summary>
+        /// <param name="trainer"></param>
+        /// <param name="metrics"></param>
+        private static void ShowAccuracyStats(EstimatorChain<KeyToValueMappingTransformer> trainer, MulticlassClassificationMetrics metrics)
+        {
+            Console.WriteLine($"************************************************************");
+            Console.WriteLine($"*    Metrics for {trainer.ToString()} multi-class classification model   ");
+            Console.WriteLine($"*-----------------------------------------------------------");
+            Console.WriteLine($"    AccuracyMacro = {metrics.MacroAccuracy.ToString(CultureInfo.CurrentCulture)}, a value between 0 and 1, the closer to 1, the better");
+            Console.WriteLine($"    AccuracyMicro = {metrics.MicroAccuracy.ToString(CultureInfo.CurrentCulture)}, a value between 0 and 1, the closer to 1, the better");
+            Console.WriteLine($"    LogLoss = {metrics.LogLoss.ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
+            Console.WriteLine($"    LogLoss for class 1 = {metrics.PerClassLogLoss[0].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
+            Console.WriteLine($"    LogLoss for class 2 = {metrics.PerClassLogLoss[1].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
+            Console.WriteLine($"    LogLoss for class 3 = {metrics.PerClassLogLoss[2].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
+            Console.WriteLine($"************************************************************");
+        }
+
+        /// <summary>
+        /// Evaluate a model.
+        /// </summary>
+        /// <param name="mlContext"></param>
+        /// <param name="testDataView"></param>
+        /// <param name="trainedModel"></param>
+        /// <returns>Multiclass Classification Metrics</returns>
+        private static MulticlassClassificationMetrics EvaluateModel(MLContext mlContext, IDataView testDataView, ITransformer trainedModel)
+        {
+            Console.WriteLine("===== Evaluating Model's accuracy with Test data =====");
+            var predictions = trainedModel.Transform(testDataView);
+            var metrics = mlContext.MulticlassClassification.Evaluate(predictions, "FetalHealth", "Score");
+            return metrics;
+        }
+
+        /// <summary>
+        /// Train the model fitting to the DataSet.
+        /// </summary>
+        /// <param name="trainingDataView"></param>
+        /// <param name="trainingPipeline"></param>
+        /// <returns>Trained model</returns>
+        private static ITransformer getTrainedModel(IDataView trainingDataView, EstimatorChain<TransformerChain<KeyToValueMappingTransformer>> trainingPipeline)
+        {
+            Console.WriteLine("=============== Training the model ===============");
+            return trainingPipeline.Fit(trainingDataView);
+        }
+
+        /// <summary>
+        /// Set the training algorithm.
+        /// </summary>
+        /// <param name="dataProcessPipeline"></param>
+        /// <param name="mlContext"></param>
+        /// <returns>Trainer</returns>
+        private static EstimatorChain<Microsoft.ML.Transforms.KeyToValueMappingTransformer> GetTrainer(EstimatorChain<TransformerChain<ColumnConcatenatingTransformer>> dataProcessPipeline, MLContext mlContext)
+        {
+            return mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(labelColumnName: "KeyColumn", featureColumnName: "Features")
+            .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName: nameof(FetalHealthData.FetalHealth), inputColumnName: "KeyColumn"));
+        }
+
+        /// <summary>
+        /// Common data process configuration with pipeline data transformations.
+        /// </summary>
+        /// <param name="mlContext"></param>
+        /// <returns>Data Process Pipeline</returns>
+        private static EstimatorChain<TransformerChain<ColumnConcatenatingTransformer>> GetDataProcessPipeline(MLContext mlContext)
+        {
+            return mlContext.Transforms.Conversion.MapValueToKey(outputColumnName: "KeyColumn", inputColumnName: nameof(FetalHealthData.FetalHealth))
                 .Append(mlContext.Transforms.Concatenate("Features", nameof(FetalHealthData.BaselineValue),
                         nameof(FetalHealthData.Accelerations),
                         nameof(FetalHealthData.FetalMovement),
@@ -72,44 +161,15 @@ namespace MulticlassClassification_Fetal
                         nameof(FetalHealthData.HistogramMedian),
                         nameof(FetalHealthData.HistogramVariance),
                         nameof(FetalHealthData.HistogramTendency))
-                                                                       .AppendCacheCheckpoint(mlContext)); 
-                                                                       // Use in-memory cache for small/medium datasets to lower training time. 
-                                                                       // Do NOT use it (remove .AppendCacheCheckpoint()) when handling very large datasets. 
-
-            // STEP 3: Set the training algorithm, then append the trainer to the pipeline  
-            var trainer = mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(labelColumnName: "KeyColumn", featureColumnName: "Features")
-            .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName: nameof(FetalHealthData.FetalHealth) , inputColumnName: "KeyColumn"));
-
-            var trainingPipeline = dataProcessPipeline.Append(trainer);
-
-            // STEP 4: Train the model fitting to the DataSet
-            Console.WriteLine("=============== Training the model ===============");
-            ITransformer trainedModel = trainingPipeline.Fit(trainingDataView);
-
-            // STEP 5: Evaluate the model and show accuracy stats
-            Console.WriteLine("===== Evaluating Model's accuracy with Test data =====");
-            var predictions = trainedModel.Transform(testDataView);
-            var metrics = mlContext.MulticlassClassification.Evaluate(predictions, "FetalHealth", "Score");
-
-            Console.WriteLine($"************************************************************");
-            Console.WriteLine($"*    Metrics for {trainer.ToString()} multi-class classification model   ");
-            Console.WriteLine($"*-----------------------------------------------------------");
-            Console.WriteLine($"    AccuracyMacro = {metrics.MacroAccuracy.ToString(CultureInfo.CurrentCulture)}, a value between 0 and 1, the closer to 1, the better");
-            Console.WriteLine($"    AccuracyMicro = {metrics.MicroAccuracy.ToString(CultureInfo.CurrentCulture)}, a value between 0 and 1, the closer to 1, the better");
-            Console.WriteLine($"    LogLoss = {metrics.LogLoss.ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
-            Console.WriteLine($"    LogLoss for class 1 = {metrics.PerClassLogLoss[0].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
-            Console.WriteLine($"    LogLoss for class 2 = {metrics.PerClassLogLoss[1].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
-            Console.WriteLine($"    LogLoss for class 3 = {metrics.PerClassLogLoss[2].ToString(CultureInfo.CurrentCulture)}, the closer to 0, the better");
-            Console.WriteLine($"************************************************************");
-
-            // STEP 6: Save/persist the trained model to a .ZIP file
-            mlContext.Model.Save(trainedModel, trainingDataView.Schema, ModelPath);
-            Console.WriteLine("The model is saved to {0}", ModelPath);
+                .AppendCacheCheckpoint(mlContext));
         }
 
+        /// <summary>
+        /// Test Classification Predictions with some hard-coded samples.
+        /// </summary>
+        /// <param name="mlContext"></param>
         private static void TestSomePredictions(MLContext mlContext)
-        {
-            //Test Classification Predictions with some hard-coded samples 
+        { 
             ITransformer trainedModel = mlContext.Model.Load(ModelPath, out var modelInputSchema);
         
             // Create prediction engine related to the loaded trained model
