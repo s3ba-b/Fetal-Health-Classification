@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Authors: Katarzyna Czerwińska s17098, Sebastian Bobrowski s17603
+
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -53,7 +56,7 @@ namespace MulticlassClassification_Fetal
         {
             var trainingDataView = mlContext.Data.LoadFromTextFile<FetalHealthData>(TrainDataPath, hasHeader: false, separatorChar: ',');
             var testDataView = mlContext.Data.LoadFromTextFile<FetalHealthData>(TestDataPath, hasHeader: false, separatorChar: ',');
-            EstimatorChain<TransformerChain<ColumnConcatenatingTransformer>> dataProcessPipeline = GetDataProcessPipeline(mlContext);
+            var dataProcessPipeline = GetDataProcessPipeline(mlContext);
             var trainer = GetTrainer(dataProcessPipeline, mlContext);
             var trainingPipeline = dataProcessPipeline.Append(trainer);
             ITransformer trainedModel = getTrainedModel(trainingDataView, trainingPipeline);
@@ -169,74 +172,88 @@ namespace MulticlassClassification_Fetal
         /// </summary>
         /// <param name="mlContext"></param>
         private static void TestSomePredictions(MLContext mlContext)
-        { 
+        {
             ITransformer trainedModel = mlContext.Model.Load(ModelPath, out var modelInputSchema);
-        
-            // Create prediction engine related to the loaded trained model
-            var predEngine = mlContext.Model.CreatePredictionEngine<FetalHealthData, FetalHealthPrediction>(trainedModel);
-        
-            // During prediction we will get Score column with 3 float values.
-            // We need to find way to map each score to original label.
-            // In order to do that we need to get TrainingLabelValues from Score column.
-            // TrainingLabelValues on top of Score column represent original labels for i-th value in Score array.
-            // Let's look how we can convert key value for PredictedLabel to original labels.
-            // We need to read KeyValues for "PredictedLabel" column.
-            VBuffer<float> keys = default;
-            predEngine.OutputSchema["PredictedLabel"].GetKeyValues(ref keys);
-            var labelsArray = keys.DenseValues().ToArray();
-        
-            // Since we apply MapValueToKey estimator with default parameters, key values
-            // depends on order of occurence in data file. Which is "Iris-setosa", "Iris-versicolor", "Iris-virginica"
-            // So if we have Score column equal to [0.2, 0.3, 0.5] that's mean what score for
-            // Iris-setosa is 0.2
-            // Iris-versicolor is 0.3
-            // Iris-virginica is 0.5.
-            //Add a dictionary to map the above float values to strings. 
-            Dictionary<float, string> HealthClasses = new Dictionary<float, string>();
-            HealthClasses.Add(1, "Normal");
-            HealthClasses.Add(2, "Suspect");
-            HealthClasses.Add(3, "Pathological");
-        
+            var predEngine = GetPredictionEngine(mlContext, trainedModel);
+            float[] labelsArray = ReadKeyValues(predEngine);
+            Dictionary<float, string> HealthClasses = AddDictionaryToMap();
+
             Console.WriteLine("=====Predicting using model====");
             //Score sample 1
             var resultprediction1 = predEngine.Predict(SampleFetalHealthData.Fetal1);
-        
+
             Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction1.Score[0].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction1.Score[1].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction1.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
-        
+
             //Score sample 2
             var resultprediction2 = predEngine.Predict(SampleFetalHealthData.Fetal2);
-        
+
             Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction2.Score[0].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction2.Score[1].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction2.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
-        
+
             //Score sample 3
             var resultprediction3 = predEngine.Predict(SampleFetalHealthData.Fetal3);
-        
+
             Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction3.Score[0].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction3.Score[1].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction3.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
-            
+
             //Score sample 4
             var resultprediction4 = predEngine.Predict(SampleFetalHealthData.Fetal4);
-        
+
             Console.WriteLine($"Actual: Suspect.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction4.Score[0].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction4.Score[1].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction4.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
-            
+
             //Score sample 5
             var resultprediction5 = predEngine.Predict(SampleFetalHealthData.Fetal5);
-        
+
             Console.WriteLine($"Actual: Normal.     Predicted label and score:  {HealthClasses[labelsArray[0]]}: {resultprediction5.Score[0].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[1]]}: {resultprediction5.Score[1].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine($"                                                {HealthClasses[labelsArray[2]]}: {resultprediction5.Score[2].ToString(CultureInfo.CurrentCulture)}");
             Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Add a dictionary to map the above float values to strings.
+        /// </summary>
+        /// <returns>Dictionary<float, string></returns>
+        private static Dictionary<float, string> AddDictionaryToMap()
+        {
+            Dictionary<float, string> HealthClasses = new Dictionary<float, string>();
+            HealthClasses.Add(1, "Normal");
+            HealthClasses.Add(2, "Suspect");
+            HealthClasses.Add(3, "Pathological");
+            return HealthClasses;
+        }
+
+        /// <summary>
+        /// Read KeyValues for "PredictedLabel" column.
+        /// </summary>
+        /// <param name="predEngine"></param>
+        /// <returns>Labels Array</returns>
+        private static float[] ReadKeyValues(PredictionEngine<FetalHealthData, FetalHealthPrediction> predEngine)
+        {
+            VBuffer<float> keys = default;
+            predEngine.OutputSchema["PredictedLabel"].GetKeyValues(ref keys);
+            var labelsArray = keys.DenseValues().ToArray();
+            return labelsArray;
+        }
+
+        /// <summary>
+        /// Create prediction engine related to the loaded trained model.
+        /// </summary>
+        /// <param name="mlContext"></param>
+        /// <returns></returns>
+        private static PredictionEngine<FetalHealthData, FetalHealthPrediction> GetPredictionEngine(MLContext mlContext, ITransformer trainedModel)
+        {
+            return mlContext.Model.CreatePredictionEngine<FetalHealthData, FetalHealthPrediction>(trainedModel);
         }
 
         public static string GetAbsolutePath(string relativePath)
