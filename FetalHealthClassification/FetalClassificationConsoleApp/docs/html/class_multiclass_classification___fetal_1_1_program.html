@@ -89,11 +89,41 @@ Properties</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
 <tr class="memitem:a90fe1120287020b008b314c8596ec8c6"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a90fe1120287020b008b314c8596ec8c6">Main</a> (string[] args)</td></tr>
+<tr class="memdesc:a90fe1120287020b008b314c8596ec8c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the program. Create MLContext to be shared across the model creation workflow objects. Set a random seed for repeatable/deterministic results across multiple trainings.  <a href="class_multiclass_classification___fetal_1_1_program.html#a90fe1120287020b008b314c8596ec8c6">More...</a><br /></td></tr>
 <tr class="separator:a90fe1120287020b008b314c8596ec8c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a831997f2f93e27f009d34ac5520957ce"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a831997f2f93e27f009d34ac5520957ce">BuildTrainEvaluateAndSaveModel</a> (MLContext mlContext)</td></tr>
+<tr class="memdesc:a831997f2f93e27f009d34ac5520957ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Common data loading configuration,build, train, evaluate and save the trained model to a zip file.  <a href="class_multiclass_classification___fetal_1_1_program.html#a831997f2f93e27f009d34ac5520957ce">More...</a><br /></td></tr>
 <tr class="separator:a831997f2f93e27f009d34ac5520957ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e2c9b7eac3fd4d946775d25ea8be4fc"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a1e2c9b7eac3fd4d946775d25ea8be4fc">SaveModel</a> (MLContext mlContext, IDataView trainingDataView, ITransformer trainedModel)</td></tr>
+<tr class="memdesc:a1e2c9b7eac3fd4d946775d25ea8be4fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save/persist the trained model to a .ZIP file.  <a href="class_multiclass_classification___fetal_1_1_program.html#a1e2c9b7eac3fd4d946775d25ea8be4fc">More...</a><br /></td></tr>
+<tr class="separator:a1e2c9b7eac3fd4d946775d25ea8be4fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a315dab19875b9398c4075f03519eae9a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a315dab19875b9398c4075f03519eae9a">ShowAccuracyStats</a> (EstimatorChain&lt; KeyToValueMappingTransformer &gt; trainer, MulticlassClassificationMetrics metrics)</td></tr>
+<tr class="memdesc:a315dab19875b9398c4075f03519eae9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Show accuracy stats.  <a href="class_multiclass_classification___fetal_1_1_program.html#a315dab19875b9398c4075f03519eae9a">More...</a><br /></td></tr>
+<tr class="separator:a315dab19875b9398c4075f03519eae9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5883f4f9946c67e274f2c4551d2c46a"><td class="memItemLeft" align="right" valign="top">static MulticlassClassificationMetrics&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#aa5883f4f9946c67e274f2c4551d2c46a">EvaluateModel</a> (MLContext mlContext, IDataView testDataView, ITransformer trainedModel)</td></tr>
+<tr class="memdesc:aa5883f4f9946c67e274f2c4551d2c46a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate a model.  <a href="class_multiclass_classification___fetal_1_1_program.html#aa5883f4f9946c67e274f2c4551d2c46a">More...</a><br /></td></tr>
+<tr class="separator:aa5883f4f9946c67e274f2c4551d2c46a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2e0eb4f104fd0b337f0e0e667c2cfe2"><td class="memItemLeft" align="right" valign="top">static ITransformer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#aa2e0eb4f104fd0b337f0e0e667c2cfe2">getTrainedModel</a> (IDataView trainingDataView, EstimatorChain&lt; TransformerChain&lt; KeyToValueMappingTransformer &gt;&gt; trainingPipeline)</td></tr>
+<tr class="memdesc:aa2e0eb4f104fd0b337f0e0e667c2cfe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train the model fitting to the DataSet.  <a href="class_multiclass_classification___fetal_1_1_program.html#aa2e0eb4f104fd0b337f0e0e667c2cfe2">More...</a><br /></td></tr>
+<tr class="separator:aa2e0eb4f104fd0b337f0e0e667c2cfe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd0547d77883ffc4b3a4329c03b51813"><td class="memItemLeft" align="right" valign="top">static EstimatorChain&lt; Microsoft.ML.Transforms.KeyToValueMappingTransformer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#acd0547d77883ffc4b3a4329c03b51813">GetTrainer</a> (EstimatorChain&lt; TransformerChain&lt; ColumnConcatenatingTransformer &gt;&gt; dataProcessPipeline, MLContext mlContext)</td></tr>
+<tr class="memdesc:acd0547d77883ffc4b3a4329c03b51813"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the training algorithm.  <a href="class_multiclass_classification___fetal_1_1_program.html#acd0547d77883ffc4b3a4329c03b51813">More...</a><br /></td></tr>
+<tr class="separator:acd0547d77883ffc4b3a4329c03b51813"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfa7bb41d7639035b815b8a56a8d1a18"><td class="memItemLeft" align="right" valign="top">static EstimatorChain&lt; TransformerChain&lt; ColumnConcatenatingTransformer &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#abfa7bb41d7639035b815b8a56a8d1a18">GetDataProcessPipeline</a> (MLContext mlContext)</td></tr>
+<tr class="memdesc:abfa7bb41d7639035b815b8a56a8d1a18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Common data process configuration with pipeline data transformations.  <a href="class_multiclass_classification___fetal_1_1_program.html#abfa7bb41d7639035b815b8a56a8d1a18">More...</a><br /></td></tr>
+<tr class="separator:abfa7bb41d7639035b815b8a56a8d1a18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09e5bcee156b971dd8cc002adf4d0d6e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a09e5bcee156b971dd8cc002adf4d0d6e">TestSomePredictions</a> (MLContext mlContext)</td></tr>
+<tr class="memdesc:a09e5bcee156b971dd8cc002adf4d0d6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test Classification Predictions with some hard-coded samples.  <a href="class_multiclass_classification___fetal_1_1_program.html#a09e5bcee156b971dd8cc002adf4d0d6e">More...</a><br /></td></tr>
 <tr class="separator:a09e5bcee156b971dd8cc002adf4d0d6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a127ed907fdf0a7de9513fd49bee59880"><td class="memItemLeft" align="right" valign="top">static Dictionary&lt; float, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a127ed907fdf0a7de9513fd49bee59880">AddDictionaryToMap</a> ()</td></tr>
+<tr class="memdesc:a127ed907fdf0a7de9513fd49bee59880"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a dictionary to map the above float values to strings.  <a href="class_multiclass_classification___fetal_1_1_program.html#a127ed907fdf0a7de9513fd49bee59880">More...</a><br /></td></tr>
+<tr class="separator:a127ed907fdf0a7de9513fd49bee59880"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59c33aa1cf662b2051e996d5009cea0e"><td class="memItemLeft" align="right" valign="top">static float[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a59c33aa1cf662b2051e996d5009cea0e">ReadKeyValues</a> (PredictionEngine&lt; FetalHealthData, FetalHealthPrediction &gt; predEngine)</td></tr>
+<tr class="memdesc:a59c33aa1cf662b2051e996d5009cea0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read KeyValues for "PredictedLabel" column.  <a href="class_multiclass_classification___fetal_1_1_program.html#a59c33aa1cf662b2051e996d5009cea0e">More...</a><br /></td></tr>
+<tr class="separator:a59c33aa1cf662b2051e996d5009cea0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93bd19baa664a330c544038d02f30afa"><td class="memItemLeft" align="right" valign="top">static PredictionEngine&lt; FetalHealthData, FetalHealthPrediction &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_multiclass_classification___fetal_1_1_program.html#a93bd19baa664a330c544038d02f30afa">GetPredictionEngine</a> (MLContext mlContext, ITransformer trainedModel)</td></tr>
+<tr class="memdesc:a93bd19baa664a330c544038d02f30afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create prediction engine related to the loaded trained model.  <a href="class_multiclass_classification___fetal_1_1_program.html#a93bd19baa664a330c544038d02f30afa">More...</a><br /></td></tr>
+<tr class="separator:a93bd19baa664a330c544038d02f30afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
@@ -115,6 +145,34 @@ Static Private Attributes</h2></td></tr>
 <tr class="separator:aa67b69f40eb2ccba35eae4b08161f357"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a127ed907fdf0a7de9513fd49bee59880"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a127ed907fdf0a7de9513fd49bee59880">&#9670;&nbsp;</a></span>AddDictionaryToMap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static Dictionary&lt;float, string&gt; MulticlassClassification_Fetal.Program.AddDictionaryToMap </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add a dictionary to map the above float values to strings. </p>
+<dl class="section return"><dt>Returns</dt><dd>Dictionary&lt;float, string&gt;</dd></dl>
+
+</div>
+</div>
 <a id="a831997f2f93e27f009d34ac5520957ce"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a831997f2f93e27f009d34ac5520957ce">&#9670;&nbsp;</a></span>BuildTrainEvaluateAndSaveModel()</h2>
 
@@ -138,6 +196,67 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Common data loading configuration,build, train, evaluate and save the trained model to a zip file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mlContext</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa5883f4f9946c67e274f2c4551d2c46a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5883f4f9946c67e274f2c4551d2c46a">&#9670;&nbsp;</a></span>EvaluateModel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static MulticlassClassificationMetrics MulticlassClassification_Fetal.Program.EvaluateModel </td>
+          <td>(</td>
+          <td class="paramtype">MLContext&#160;</td>
+          <td class="paramname"><em>mlContext</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IDataView&#160;</td>
+          <td class="paramname"><em>testDataView</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ITransformer&#160;</td>
+          <td class="paramname"><em>trainedModel</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Evaluate a model. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mlContext</td><td></td></tr>
+    <tr><td class="paramname">testDataView</td><td></td></tr>
+    <tr><td class="paramname">trainedModel</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Multiclass Classification Metrics</dd></dl>
 
 </div>
 </div>
@@ -167,6 +286,178 @@ Static Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="abfa7bb41d7639035b815b8a56a8d1a18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfa7bb41d7639035b815b8a56a8d1a18">&#9670;&nbsp;</a></span>GetDataProcessPipeline()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static EstimatorChain&lt;TransformerChain&lt;ColumnConcatenatingTransformer&gt; &gt; MulticlassClassification_Fetal.Program.GetDataProcessPipeline </td>
+          <td>(</td>
+          <td class="paramtype">MLContext&#160;</td>
+          <td class="paramname"><em>mlContext</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Common data process configuration with pipeline data transformations. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mlContext</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Data Process Pipeline</dd></dl>
+
+</div>
+</div>
+<a id="a93bd19baa664a330c544038d02f30afa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93bd19baa664a330c544038d02f30afa">&#9670;&nbsp;</a></span>GetPredictionEngine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static PredictionEngine&lt;FetalHealthData, FetalHealthPrediction&gt; MulticlassClassification_Fetal.Program.GetPredictionEngine </td>
+          <td>(</td>
+          <td class="paramtype">MLContext&#160;</td>
+          <td class="paramname"><em>mlContext</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ITransformer&#160;</td>
+          <td class="paramname"><em>trainedModel</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create prediction engine related to the loaded trained model. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mlContext</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="aa2e0eb4f104fd0b337f0e0e667c2cfe2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2e0eb4f104fd0b337f0e0e667c2cfe2">&#9670;&nbsp;</a></span>getTrainedModel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static ITransformer MulticlassClassification_Fetal.Program.getTrainedModel </td>
+          <td>(</td>
+          <td class="paramtype">IDataView&#160;</td>
+          <td class="paramname"><em>trainingDataView</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EstimatorChain&lt; TransformerChain&lt; KeyToValueMappingTransformer &gt;&gt;&#160;</td>
+          <td class="paramname"><em>trainingPipeline</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Train the model fitting to the DataSet. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">trainingDataView</td><td></td></tr>
+    <tr><td class="paramname">trainingPipeline</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Trained model</dd></dl>
+
+</div>
+</div>
+<a id="acd0547d77883ffc4b3a4329c03b51813"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd0547d77883ffc4b3a4329c03b51813">&#9670;&nbsp;</a></span>GetTrainer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static EstimatorChain&lt;Microsoft.ML.Transforms.KeyToValueMappingTransformer&gt; MulticlassClassification_Fetal.Program.GetTrainer </td>
+          <td>(</td>
+          <td class="paramtype">EstimatorChain&lt; TransformerChain&lt; ColumnConcatenatingTransformer &gt;&gt;&#160;</td>
+          <td class="paramname"><em>dataProcessPipeline</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MLContext&#160;</td>
+          <td class="paramname"><em>mlContext</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the training algorithm. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dataProcessPipeline</td><td></td></tr>
+    <tr><td class="paramname">mlContext</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Trainer</dd></dl>
+
+</div>
+</div>
 <a id="a90fe1120287020b008b314c8596ec8c6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a90fe1120287020b008b314c8596ec8c6">&#9670;&nbsp;</a></span>Main()</h2>
 
@@ -190,6 +481,146 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Start the program. Create MLContext to be shared across the model creation workflow objects. Set a random seed for repeatable/deterministic results across multiple trainings. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">args</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a59c33aa1cf662b2051e996d5009cea0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59c33aa1cf662b2051e996d5009cea0e">&#9670;&nbsp;</a></span>ReadKeyValues()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static float [] MulticlassClassification_Fetal.Program.ReadKeyValues </td>
+          <td>(</td>
+          <td class="paramtype">PredictionEngine&lt; FetalHealthData, FetalHealthPrediction &gt;&#160;</td>
+          <td class="paramname"><em>predEngine</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read KeyValues for "PredictedLabel" column. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">predEngine</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Labels Array</dd></dl>
+
+</div>
+</div>
+<a id="a1e2c9b7eac3fd4d946775d25ea8be4fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e2c9b7eac3fd4d946775d25ea8be4fc">&#9670;&nbsp;</a></span>SaveModel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void MulticlassClassification_Fetal.Program.SaveModel </td>
+          <td>(</td>
+          <td class="paramtype">MLContext&#160;</td>
+          <td class="paramname"><em>mlContext</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IDataView&#160;</td>
+          <td class="paramname"><em>trainingDataView</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ITransformer&#160;</td>
+          <td class="paramname"><em>trainedModel</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save/persist the trained model to a .ZIP file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mlContext</td><td></td></tr>
+    <tr><td class="paramname">trainingDataView</td><td></td></tr>
+    <tr><td class="paramname">trainedModel</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a315dab19875b9398c4075f03519eae9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a315dab19875b9398c4075f03519eae9a">&#9670;&nbsp;</a></span>ShowAccuracyStats()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void MulticlassClassification_Fetal.Program.ShowAccuracyStats </td>
+          <td>(</td>
+          <td class="paramtype">EstimatorChain&lt; KeyToValueMappingTransformer &gt;&#160;</td>
+          <td class="paramname"><em>trainer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MulticlassClassificationMetrics&#160;</td>
+          <td class="paramname"><em>metrics</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Show accuracy stats. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">trainer</td><td></td></tr>
+    <tr><td class="paramname">metrics</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -216,6 +647,14 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Test Classification Predictions with some hard-coded samples. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mlContext</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
