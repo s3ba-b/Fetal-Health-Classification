@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['main_5',['Main',['../class_multiclass_classification___fetal_1_1_program.html#a90fe1120287020b008b314c8596ec8c6',1,'MulticlassClassification_Fetal::Program']]],
-  ['modelpath_6',['ModelPath',['../class_multiclass_classification___fetal_1_1_program.html#aa67b69f40eb2ccba35eae4b08161f357',1,'MulticlassClassification_Fetal::Program']]],
-  ['modelrelativepath_7',['ModelRelativePath',['../class_multiclass_classification___fetal_1_1_program.html#a5c79d1fc33ddcd03ee437e8b173af320',1,'MulticlassClassification_Fetal::Program']]],
-  ['multiclassclassification_5ffetal_8',['MulticlassClassification_Fetal',['../namespace_multiclass_classification___fetal.html',1,'']]]
+  ['getabsolutepath_6',['GetAbsolutePath',['../class_multiclass_classification___fetal_1_1_program.html#ac450d34ef5d20c766e41e1d4c81a2f43',1,'MulticlassClassification_Fetal::Program']]],
+  ['getdataprocesspipeline_7',['GetDataProcessPipeline',['../class_multiclass_classification___fetal_1_1_program.html#abfa7bb41d7639035b815b8a56a8d1a18',1,'MulticlassClassification_Fetal::Program']]],
+  ['getpredictionengine_8',['GetPredictionEngine',['../class_multiclass_classification___fetal_1_1_program.html#a93bd19baa664a330c544038d02f30afa',1,'MulticlassClassification_Fetal::Program']]],
+  ['gettrainedmodel_9',['getTrainedModel',['../class_multiclass_classification___fetal_1_1_program.html#aa2e0eb4f104fd0b337f0e0e667c2cfe2',1,'MulticlassClassification_Fetal::Program']]],
+  ['gettrainer_10',['GetTrainer',['../class_multiclass_classification___fetal_1_1_program.html#acd0547d77883ffc4b3a4329c03b51813',1,'MulticlassClassification_Fetal::Program']]]
 ];
